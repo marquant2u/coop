@@ -46,7 +46,8 @@ export default {
 				api.delete('/members/signout').then(response => {
 					commit("initState")
 				}).catch(error => {
-					reject("store > auth > logout -> error")
+					console.log("store > auth > logout -> error")
+                    console.log(error)
 				})
 			}
 		}
