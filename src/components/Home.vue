@@ -17,7 +17,7 @@
         <div class="chats" v-if="channel_actuel != 0">
             <div id="titre">Chats :</div>
             <button type="button" class="button-deco" @click="logout()" >Se deconnecter</button>
-            <div class="scrollbar historique" id="style-2">
+            <div class="scrollbar historique" ref="histo" id="style-2">
                 <div v-for="post in channels_post"
 				:channels_post="post"
 				:key="post._id">
@@ -55,9 +55,11 @@
     } from 'vuex'
 
     export default {
+
         computed: {
-            ...mapState(['channels_post', 'channel_actuel', 'channels', ])
+            ...mapState(['channels_post', 'channel_actuel', 'channels'])
         },
+
         created() {
             api.get('/channels').then((response) => {
                 this.$store.dispatch('fillChannel', response.data)
@@ -68,6 +70,7 @@
             send() {
                 this.$store.dispatch('send_channel', this.$refs.champs_text.value)
                 this.$refs.champs_text.value = "";
+                this.$refs.histo.scrollTop = this.$refs.histo.scrollHeight;
             },
 
             logout() {
@@ -151,7 +154,7 @@
         -khtml-border-radius: 20px;
         -webkit-border-radius: 20px;
         border-radius: 20px;
-        
+
 
     }
 
