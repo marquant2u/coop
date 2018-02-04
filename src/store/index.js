@@ -12,11 +12,12 @@ export default new Vuex.Store({
     modules: {
         auth,
     },
-
+    
     state: {
         channels_post: {},
         channel_actuel: 0,
         channels: {},
+        members: {}
     },
 
     getters: {
@@ -34,6 +35,9 @@ export default new Vuex.Store({
         },
         initchannel(state, chan) {
             state.channels = chan
+        },
+        initMembers(state, mem) {
+            state.members = mem
         }
     },
     actions: {
@@ -41,7 +45,7 @@ export default new Vuex.Store({
         co_channel({
             commit
         }, channels) {
-            commit('initchan', channels._id)
+            commit('initchan', channels)
             api.get('/channels/' + channels._id + '/posts', {}).then(response => {
                 commit('renderpost', response.data)
             })
@@ -75,6 +79,12 @@ export default new Vuex.Store({
             commit('initchannel', data)
         },
 
+        fillMembers({
+            commit
+        }, data) {
+            commit('initMembers', data)
+        },
+
         supp_channel({
             commit
         }, channels) {
@@ -91,15 +101,34 @@ export default new Vuex.Store({
             state
         }, txt) {
             console.log(txt)
-            api.post('/channels/' + state   .channel_actuel + '/posts', {
+            api.post('/channels/' + state.channel_actuel._id + '/posts', {
                 message: txt
             }).then(response => {
                 console.log('message envoyé')
-                api.get('/channels/' + state.channel_actuel +'/posts', {}).then(response => {
+                api.get('/channels/' + state.channel_actuel._id + '/posts', {}).then(response => {
                     commit('renderpost', response.data)
                 })
             })
         },
 
+        delete_post({
+            commit,
+            state
+        }, post) {
+            api.delete('/channels/' + post.channel_id + '/posts/' + post._id, {}).then(response => {
+                api.get('/channels/' + post.channel_id + '/posts', {}).then(response => {
+                    commit('renderpost', response.data)
+                })
+            })
+        },
+
+        update_post({
+            commit,
+            state
+        }) {
+            api.get('/channels/' + state.channel_actuel._id + '/posts', {}).then(response => {
+                commit('renderpost', response.data)
+            })
+        }
     }
-})
+});

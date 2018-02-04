@@ -1,66 +1,27 @@
 <template>
     <div class="Home">
-        <div class="channel">
-            <div class="channelvfor scrollbar1" id="style-2">
-                <div id='addnew'>
-                <h1>Membres </h1>
-                <button type="button" class="btn btn-2"@click="route_member()">Liste des membres</button>
-                <button type="button" class="btn btn-2"@click="route_member()">Mon profil</button>
-            </div>
-            <div id='addnew'>
-                <h1>Channel </h1>
-                <button type="button" class="btn btn-2"@click="create_channel">Ajouter channel !</button>
-            </div>
-            <div v-for="chan in channels"
-				:channels="chan"
-				:key="chan._id">
-                <div class="ext" ><button type="button" class="btn btn-5 btn-long" @click="co_channel(chan)" :id="chan._id" >{{ chan.label }}</button>
-                <button type="button" class="btn btn-6" @click="supp_channel(chan)" :id="chan._id" >Delete</button>
-                <p class="topic">Topic : {{ chan.topic }}</p>
-                </div>
-            </div>
-            
-            </div>
+        <div class="left"> 
+            <button type="button" class="btn btn-2" @click="home()"> Retour</button>
+            <button type="button" class="btn btn-6 deco" @click="logout()" >Se deconnecter</button>
         </div>
-        <div class="chats" v-if="channel_actuel != 0">
-            <div class="info">
-                <h1>{{ channel_actuel.label }}</h1>
-                <button type="button" class="btn btn-6 deco" @click="logout()" >Se deconnecter</button>
-            </div>
-            <div class="scrollbar historique" ref="histo" >
-                <div v-for="post in channels_post"
-				:channels_post="post"
-				:key="post._id">
-                    <div v-for="mem in members"
+        <div class="right">
+            <h1>Members</h1>
+            <div v-for="mem in members"
 				        :members="mem"
-				        :key="mem._id">
-                        <div v-if="mem._id === post.member_id" class='message'>
-                            <div class='message1'>
-                                <p class= "member"> {{ mem.fullname }} :</p>
-                                <p class= "message" ref="message"> {{ post.message }}</p>
-                                <p class= "date"> {{ post.updated_at }}</p>
+				        :key="mem._id" class='members'>
+                            <img src="http://p-hold.com/150" height="150" width="150">
+                            <div>
+                                <p class= "member"> {{ mem.fullname }} </p>
                             </div>
-                            <div class='message2'>
-                                <button type="button" class="btn btn-6"@click="delete_mes(post)">Delete</button>
+                            <div>
+                                <p class= "email"> {{ mem.email }}</p>  
                             </div>
-                        </div>
+                            <div>
+                                <p class= "token"> token : {{ mem.token }} </p>
+                            </div>
                     </div>
-                </div>
-                <br>
-                <br>
-            </div>
-            <div id="message">
-                <form>
-                    <input id="champs_text" ref="champs_text" type="text" value="Votre message" onfocus="if (this.value=='Votre message') this.value='';" onblur="if (this.value=='') this.value='Votre message';"/>
-                    <input type="submit" class="btn btn-5" value="Envoyer"  id="bouton_envoi" @click="send ()"/>
-                </form>
-            </div>
         </div>
-        <div class="chats" v-if="channel_actuel === 0">
-            <div id="historique">
-                <p>Veuillez séléctionner un channel sur le coté</p>
-            </div>
-        </div>
+        
     </div>
 </template>
 
@@ -82,27 +43,12 @@
         },
 
         created() {
-            api.get('/channels').then((response) => {
-                this.$store.dispatch('fillChannel', response.data)
-            });
 
             api.get('/members').then((response) => {
                 this.$store.dispatch('fillMembers', response.data)
             });
-
-            var intervalle = setInterval(() => {
-                this.$store.dispatch('update_post')
-                console.log('update data')
-                this.$refs.histo.scrollTop = this.$refs.histo.scrollHeight
-            }, 15000);
         },
         methods: {
-
-            send() {
-                this.$store.dispatch('send_channel', this.$refs.champs_text.value)
-                this.$refs.champs_text.value = "";
-                this.$refs.histo.scrollTop = this.$refs.histo.scrollHeight;
-            },
 
             logout() {
                 this.$store.dispatch('auth/logout', true, {
@@ -111,20 +57,11 @@
             },
 
 
-            route_member() {
-                console.log('ok')
+            home() {
                 this.$router.push({
-                    name: "members"
+                    name: "home"
                 })
-            },
-
-            delete_mes(post) {
-                this.$store.dispatch('delete_post', post)
-            },
-
-            ...mapActions(['co_channel']),
-            ...mapActions(['supp_channel']),
-            ...mapActions(['create_channel'])
+            }
         }
     }
 
@@ -133,127 +70,57 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-    .message {
+    .left {
+        width: 100%;
+        background-color: lightsteelblue;
         display: flex;
         flex-wrap: wrap;
-    }
-
-    .message1 {
-        flex-basis: 80%;
-    }
-
-    .message2 {
-        flex-basis: 20%;
-    }
-
-    .info {
-        background-color: lightskyblue;
-        width: 100%;
-        display: flex;
-        flex-wrap: nowrap;
         justify-content: space-between;
-        border-style: solid;
-        border-radius: 10px 10px 10px 10px;
-        border-color: lightskyblue;
     }
 
-    .ext {
-
-        color: black;
-        margin: 2%;
-    }
-
-    .member {
-        color: chocolate;
-        font-size: 20px;
-    }
-
-    .message {
-        color: dimgray;
-    }
-
-    .date {
-        font-size: 8px;
-    }
-
-    .Home {
-        display: flex;
-        flex-wrap: wrap;
-    }
-
-    .chats {
-        display: flex;
-        flex-wrap: wrap;
-        flex-basis: 65%;
-        flex-grow: 3;
+    .right {
+        width: 100%;
         background-color: whitesmoke;
     }
-
-    .channel {
-        margin-left: auto;
-        margin-right: auto;
-        text-align: center;
+    
+    .members{
         display: flex;
         flex-wrap: wrap;
+        justify-content: space-between;
+        margin: 4em;
+    }
+    
+    .members > div {
         flex-basis: 25%;
-        flex-grow: 1;
-        background-color: lightskyblue;
+    }
+    
+    .member{
+        color: blueviolet; 
+    }
+    
+    .email{
+        color: deepskyblue;
     }
 
-
-
-    .channelvfor {
-        width: 100%;
+    .token{
+        color: brown;
     }
-
-    .topic {
-        color: brown,
-
-    }
-
-    .historique {
-
-        margin: 40px;
-        width: 90%;
-        height: 500px;
-        padding: 5px;
-        border: 3px solid lightskyblue;
-        background-color: whitesmoke;
-        -moz-border-radius: 20px;
-        -khtml-border-radius: 20px;
-        -webkit-border-radius: 20px;
-        border-radius: 20px;
-
-
-    }
-
-    #message {
-        width: 100%;
-
-    }
-
-    #champs_text {
-        margin-bottom: 20px;
-        margin-left: 20px;
-        width: 80%;
-    }
-
 
     #style-2::-webkit-scrollbar-track {
         -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
         border-radius: 10px;
-        background-color: grey;
+        background-color: dimgrey;
     }
 
     #style-2::-webkit-scrollbar {
         width: 12px;
-        background-color: lightskyblue;
+        background-color: dimgrey;
     }
 
     #style-2::-webkit-scrollbar-thumb {
         border-radius: 10px;
         -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
-        background-color: white;
+        background-color: dimgrey;
     }
 
     header {
@@ -307,8 +174,8 @@
     }
 
     body {
-        background-color: whitesmoke;
-        color: whitesmoke;
+        background-color: black;
+        color: #121221;
         font: 700 14px Montserrat, sans-serif;
         letter-spacing: 0.125em;
         text-align: center;
@@ -430,7 +297,7 @@
     }
 
     h1 {
-        color: white;
+        color: lightblue;
     }
 
 </style>

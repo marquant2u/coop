@@ -49,31 +49,29 @@
         margin-left: auto;
         margin-right: auto;
         width: 30%;
-        text-align: center; 
-        background-color: grey;
+        text-align: center;
+        background-color: lightskyblue;
         padding: 40px;
         border-radius: 20px 20px 20px 20px;
     }
 
     html body {
-        background-color: darkgrey;
+        background-color: whitesmoke;
     }
-    
-    .form-sign > div > label{
+
+    .form-sign>div>label {
         width: 100%;
     }
-    
-    .form-sign > div > input{
+
+    .form-sign>div>input {
         width: 100%;
         text-align: center;
         justify-content: center;
-        margin:auto;
+        margin: auto;
     }
-    
-    .buttons{
+
+    .buttons {
         margin-top: 9px;
     }
-    
-    
 
 </style>
