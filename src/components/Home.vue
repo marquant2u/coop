@@ -5,7 +5,6 @@
                 <div id='addnew'>
                 <h1>Membres </h1>
                 <button type="button" class="btn btn-2"@click="route_member()">Liste des membres</button>
-                <button type="button" class="btn btn-2"@click="route_member()">Mon profil</button>
             </div>
             <div id='addnew'>
                 <h1>Channel </h1>
